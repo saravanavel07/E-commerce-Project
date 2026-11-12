@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101510">
+  <meta name="description" content="An interactive showcase of E-Commerce Data Insights: an Amazon India order analytics project with Power BI and Python.">
+  <title>E-Commerce Data Insights — Analytics Showcase</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f5f4ed;
+      --muted: #a7afa6;
+      --background: #101510;
+      --surface: #171e18;
+      --line: rgba(235, 244, 224, .12);
+      --lime: #c3f56a;
+      --mint: #73e1bd;
+      --orange: #ffad79;
+      --radius: 22px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      background: radial-gradient(ellipse at 75% 4%, rgba(84, 125, 67, .22), transparent 34rem), var(--background);
+      line-height: 1.6;
+    }
+    a { color: inherit; }
+    a:focus-visible { outline: 3px solid var(--lime); outline-offset: 4px; border-radius: 4px; }
+    .shell { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding-block: 25px; }
+    .brand { display: inline-flex; gap: 11px; align-items: center; text-decoration: none; font-size: .94rem; font-weight: 720; letter-spacing: -.02em; }
+    .brand-mark { display: grid; width: 35px; aspect-ratio: 1; place-items: center; color: #17200f; background: var(--lime); border-radius: 11px; font-size: 1.15rem; }
+    .nav { display: flex; gap: 27px; align-items: center; color: var(--muted); font-size: .85rem; }
+    .nav a { text-decoration: none; transition: color .2s ease; }
+    .nav a:hover { color: var(--lime); }
+    .eyebrow { display: inline-flex; gap: 9px; align-items: center; color: var(--lime); font-size: .75rem; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }
+    .live-dot { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; box-shadow: 0 0 16px rgba(115, 225, 189, .8); animation: pulse 2s ease-in-out infinite; }
+    .hero { display: grid; grid-template-columns: 1.04fr .96fr; gap: 56px; align-items: center; padding-block: 72px 92px; }
+    .hero-copy { animation: rise-in .7s both; }
+    h1 { max-width: 650px; margin: 18px 0 20px; font-size: clamp(2.8rem, 6vw, 5rem); line-height: 1.02; letter-spacing: -.065em; }
+    h1 span { color: var(--lime); }
+    .hero-copy > p { max-width: 550px; margin: 0; color: var(--muted); font-size: 1.04rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+    .button { display: inline-flex; justify-content: center; align-items: center; gap: 9px; min-height: 47px; padding: 0 18px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; font-size: .88rem; font-weight: 700; transition: transform .2s ease, background .2s ease, border-color .2s ease; }
+    .button:hover { transform: translateY(-3px); border-color: rgba(195, 245, 106, .5); }
+    .button.primary { color: #17200f; background: var(--lime); border-color: var(--lime); }
+    .button.primary:hover { background: #d3ff8b; }
+    .button.secondary { background: rgba(255,255,255,.025); }
+    .hero-note { display: flex; gap: 9px; align-items: center; margin-top: 20px; color: #899389; font-size: .78rem; }
+    .preview { position: relative; padding: 20px; border: 1px solid var(--line); border-radius: 26px; background: linear-gradient(145deg, rgba(33, 45, 33, .95), rgba(20, 27, 21, .94)); box-shadow: 0 32px 90px rgba(0,0,0,.26); animation: rise-in .8s .13s both; }
+    .preview::before { position: absolute; z-index: -1; inset: 14% -7% -9% 12%; border-radius: 50%; background: rgba(159, 221, 100, .1); filter: blur(40px); content: ""; }
+    .preview-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 17px; }
+    .preview-title { font-size: .85rem; font-weight: 700; }
+    .tag { padding: 5px 9px; border: 1px solid rgba(115, 225, 189, .24); border-radius: 999px; color: var(--mint); background: rgba(115, 225, 189, .07); font-size: .66rem; }
+    .metric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .metric { padding: 13px; border: 1px solid rgba(235,244,224,.08); border-radius: 15px; background: rgba(255,255,255,.025); transition: transform .25s ease, border-color .25s ease; }
+    .metric:hover { transform: translateY(-4px); border-color: rgba(195,245,106,.42); }
+    .metric-label { color: var(--muted); font-size: .69rem; }
+    .metric-value { margin-top: 4px; font-size: clamp(1.35rem, 3vw, 1.85rem); font-weight: 760; letter-spacing: -.05em; }
+    .metric-value small { color: var(--lime); font-size: .67rem; font-weight: 650; letter-spacing: 0; }
+    .chart-card { margin-top: 11px; padding: 14px; border: 1px solid rgba(235,244,224,.08); border-radius: 15px; background: rgba(255,255,255,.025); }
+    .chart-head { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: .7rem; }
+    .chart-head strong { color: var(--ink); font-size: .76rem; }
+    .chart { display: flex; height: 105px; gap: 9px; align-items: end; padding: 15px 3px 0; border-bottom: 1px solid var(--line); }
+    .bar { flex: 1; height: var(--height); min-height: 9px; border-radius: 6px 6px 2px 2px; background: linear-gradient(180deg, var(--lime), rgba(115,225,189,.46)); transform-origin: bottom; animation: grow .8s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--delay); transition: filter .2s ease; }
+    .bar:hover { filter: brightness(1.35); }
+    .chart-labels { display: flex; justify-content: space-between; padding-top: 6px; color: #788276; font-size: .61rem; }
+    .section { padding-block: 54px; border-top: 1px solid var(--line); }
+    .section-heading { display: flex; justify-content: space-between; gap: 24px; align-items: end; margin-bottom: 24px; }
+    .section-heading h2 { margin: 7px 0 0; font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -.05em; }
+    .section-heading p { max-width: 440px; margin: 0; color: var(--muted); font-size: .88rem; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .card { min-height: 188px; padding: 21px; border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(145deg, rgba(255,255,255,.035), rgba(255,255,255,.012)); transition: transform .25s ease, background .25s ease, border-color .25s ease; }
+    .card:hover { transform: translateY(-5px); border-color: rgba(195,245,106,.32); background: rgba(255,255,255,.045); }
+    .card-icon { display: grid; width: 38px; aspect-ratio: 1; place-items: center; border: 1px solid rgba(195,245,106,.2); border-radius: 12px; color: var(--lime); background: rgba(195,245,106,.08); font-size: 1rem; }
+    .card h3 { margin: 17px 0 6px; font-size: .98rem; }
+    .card p { margin: 0; color: var(--muted); font-size: .82rem; }
+    .insight { display: grid; grid-template-columns: .8fr 1.2fr; gap: 30px; align-items: center; margin-block: 20px 60px; padding: 27px; border: 1px solid rgba(195,245,106,.18); border-radius: var(--radius); background: linear-gradient(105deg, rgba(195,245,106,.075), rgba(115,225,189,.025)); }
+    .insight h2 { margin: 5px 0 0; font-size: 1.6rem; line-height: 1.2; letter-spacing: -.045em; }
+    .insight p { margin: 0; color: #bdc5bb; font-size: .88rem; }
+    footer { display: flex; justify-content: space-between; gap: 18px; padding-block: 23px 34px; border-top: 1px solid var(--line); color: #879087; font-size: .77rem; }
+    footer a { color: var(--lime); text-decoration: none; }
+    @keyframes rise-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes grow { from { transform: scaleY(.18); opacity: .35; } to { transform: scaleY(1); opacity: 1; } }
+    @keyframes pulse { 50% { opacity: .5; transform: scale(.8); } }
+    @media (max-width: 800px) {
+      .hero { grid-template-columns: 1fr; gap: 36px; padding-block: 48px 65px; }
+      .preview { max-width: 560px; width: 100%; }
+      .cards { grid-template-columns: 1fr 1fr; }
+      .insight { grid-template-columns: 1fr; gap: 13px; }
+    }
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 32px, 1120px); }
+      .topbar { padding-block: 18px; }
+      .nav { gap: 13px; font-size: .76rem; }
+      .nav a:nth-child(2) { display: none; }
+      .hero { padding-top: 38px; }
+      .cards { grid-template-columns: 1fr; }
+      .card { min-height: 0; }
+      .section-heading { display: block; }
+      .section-heading p { margin-top: 10px; }
+      .preview { padding: 14px; }
+      footer { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="shell topbar">
+    <a class="brand" href="#home" aria-label="E-Commerce Data Insights home"><span class="brand-mark" aria-hidden="true">↗</span> E-Commerce Insights</a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#highlights">Highlights</a>
+      <a href="#methods">Analysis</a>
+      <a href="E-Commerece%20Data%20analysis/E-commerce.html">Report ↗</a>
+    </nav>
+  </header>
+  <main id="home" class="shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="live-dot" aria-hidden="true"></span> Commerce, made clearer</div>
+        <h1 id="hero-title">Turn orders into <span>opportunity.</span></h1>
+        <p>A data-led view of Amazon India order activity. Explore product mix, fulfilment, delivery outcomes, and customer geography through a Power BI report and Python analysis.</p>
+        <div class="actions">
+          <a class="button primary" href="E-Commerece%20Data%20analysis/E-commerce.html">Explore the report <span aria-hidden="true">↗</span></a>
+          <a class="button secondary" href="E-Commerece%20Data%20analysis/E-commerce.ipynb">Open the notebook</a>
+        </div>
+        <div class="hero-note"><span aria-hidden="true">✳</span> Portfolio analytics project · Power BI + Python</div>
+      </div>
+      <div class="preview" aria-label="Static visual summary of dataset dimensions and sample categories">
+        <div class="preview-head"><div class="preview-title">Dataset at a glance</div><span class="tag">NOTEBOOK SNAPSHOT</span></div>
+        <div class="metric-grid">
+          <div class="metric"><div class="metric-label">Transaction records</div><div class="metric-value">128.9k <small>rows</small></div></div>
+          <div class="metric"><div class="metric-label">Fields explored</div><div class="metric-value">24 <small>columns</small></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><strong>Example category mix</strong><span>row counts · sample</span></div>
+          <div class="chart" role="img" aria-label="Category sample row counts: Set 50,284; Kurta 49,877; Western Dress 15,500; Top 10,622; Ethnic Dress 1,159.">
+            <span class="bar" style="--height:96%;--delay:.12s"></span><span class="bar" style="--height:95%;--delay:.2s"></span><span class="bar" style="--height:38%;--delay:.28s"></span><span class="bar" style="--height:27%;--delay:.36s"></span><span class="bar" style="--height:10%;--delay:.44s"></span>
+          </div>
+          <div class="chart-labels"><span>Set</span><span>Kurta</span><span>Western</span><span>Top</span><span>Ethnic</span></div>
+        </div>
+      </div>
+    </section>
+    <section id="highlights" class="section" aria-labelledby="highlights-title">
+      <div class="section-heading">
+        <div><div class="eyebrow">Project highlights</div><h2 id="highlights-title">A clearer view of commerce.</h2></div>
+        <p>Move from raw transaction rows to practical questions about what sells, how orders ship, and where customers are located.</p>
+      </div>
+      <div class="cards">
+        <article class="card"><div class="card-icon" aria-hidden="true">▥</div><h3>Product performance</h3><p>Compare category, style, SKU, and size patterns to understand the product mix.</p></article>
+        <article class="card"><div class="card-icon" aria-hidden="true">⌁</div><h3>Order journey</h3><p>Review order and courier statuses alongside fulfilment and shipping service levels.</p></article>
+        <article class="card"><div class="card-icon" aria-hidden="true">◎</div><h3>Customer geography</h3><p>Explore the city and state fields to see how order activity is distributed.</p></article>
+      </div>
+    </section>
+    <section id="methods" class="insight" aria-labelledby="methods-title">
+      <div><div class="eyebrow">Built for exploration</div><h2 id="methods-title">Dashboard visuals.<br>Notebook depth.</h2></div>
+      <p>The Power BI report provides a visual overview, while the Jupyter notebook inspects the data with pandas. The numbers on this page are a static illustration of the notebook snapshot—not a live feed. The source CSV is not included; use an authorized local copy to rerun the analysis.</p>
+    </section>
+  </main>
+  <footer class="shell"><span>© E-Commerce Data Insights · Analytics portfolio project</span><a href="https://github.com/saravanavel07/E-commerce-Project">View source on GitHub ↗</a></footer>
+</body>
+</html>
